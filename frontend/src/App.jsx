@@ -1,33 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React,{useState, useEffect} from 'react';
+import axios from 'axios';
+import Counter from './Components/Counter';
+import TodoForm from './Components/ToDoForm';
+import TodoList from './Components/ToDoList';
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
 
+  const [todos, setTodos] = useState([]);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/todos');
+      setTodos(response.data);
+    } catch (err) {
+      console.error('Failed to fetch todos', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+     <div>
+      <h1>React Counter App</h1>
+      <Counter />
+    </div>
+
+    <div>
+      <h1>Todo List App</h1>
+      <TodoForm fetchTodos={fetchTodos} />
+      <TodoList todos={todos} />
+    </div>
     </>
   )
 }
